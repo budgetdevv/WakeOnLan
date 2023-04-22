@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Globalization;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace WakeOnLan
 {
@@ -12,10 +14,30 @@ namespace WakeOnLan
         [SkipLocalsInit]
         private static unsafe void Main(string[] args)
         {
-            Console.WriteLine("Enter MAC Address of device to wake up!");
+            string macAddress;
 
-            var macAddress = Console.ReadLine();
+            IPAddress ip;
             
+            if (args.Length != 2)
+            {
+                Console.WriteLine("Enter MAC Address of device to wake up!");
+
+                macAddress = Console.ReadLine();
+            
+                Console.WriteLine("Enter IP of device!");
+
+                ip = IPAddress.Parse(Console.ReadLine());
+            }
+
+            else
+            {
+                ref var firstArg = ref MemoryMarshal.GetArrayDataReference(args);
+
+                macAddress = firstArg;
+                
+                ip = IPAddress.Parse(Unsafe.Add(ref firstArg, 1));
+            }
+
             var udpClient = new UdpClient();
     
             //Enable UDP broadcasting for UDPClient
@@ -74,6 +96,22 @@ namespace WakeOnLan
             udpClient.Close();
 
             Console.WriteLine("Wake on lan sent!");
+
+            var ping = new Ping();
+            
+            while (true)
+            {
+                var response = ping.Send(ip);
+
+                if (response.Status != IPStatus.Success)
+                {
+                    continue;
+                }
+                
+                break;
+            }
+            
+            Console.WriteLine("Target machine is online!");
         }
     }
 }
