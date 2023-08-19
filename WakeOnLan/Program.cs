@@ -31,7 +31,7 @@ namespace WakeOnLan
             else
             {
                 ref var firstArg = ref MemoryMarshal.GetArrayDataReference(args);
-
+                
                 macAddress = firstArg;
                 
                 ip = IPAddress.Parse(Unsafe.Add(ref firstArg, 1));
@@ -90,7 +90,7 @@ namespace WakeOnLan
             var dgramSpan = new ReadOnlySpan<byte>(dgramBuffer, DgramBufferLength);
 
             // send datagram using UDP and port 0
-            udpClient.Send(dgramSpan, new IPEndPoint(IPAddress.Broadcast, 0));
+            udpClient.Send(dgramSpan, new IPEndPoint(IPAddress.Broadcast, 40_000));
             
             udpClient.Close();
 
