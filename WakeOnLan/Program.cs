@@ -89,8 +89,8 @@ namespace WakeOnLan
 
             var dgramSpan = new ReadOnlySpan<byte>(dgramBuffer, DgramBufferLength);
 
-            // send datagram using UDP and port 0
-            udpClient.Send(dgramSpan, new IPEndPoint(IPAddress.Broadcast, 40_000));
+            // send datagram using UDP and port 40_000 ( 40_000 for cross-platform support )
+            udpClient.Send(dgramSpan, new IPEndPoint(IPAddress.Broadcast, port: 40_000));
             
             udpClient.Close();
 
